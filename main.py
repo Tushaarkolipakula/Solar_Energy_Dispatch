@@ -14,6 +14,7 @@ P_MAX_DIS = 3.5
 ETA_CH = 0.95
 ETA_DIS = 0.95
 
+# SOC is the measure of how full the battery is
 SOC_MIN = 0.10 * E_MAX
 SOC_MAX = 0.95 * E_MAX
 SOC_INIT = SOC_MIN
@@ -72,4 +73,68 @@ Ppv = np.asarray(Ppv, float)
 Price_buy = np.asarray(Price_buy, float)
 Price_sell = np.asarray(Price_sell, float)
 
+# Heuristic Approach
+# 1. Serve load from PV first
+# 2. If PV remains, charge the battery
+# 3. After charging, export remaining PV
+# 4. In peak hours, discharge battery to reduce import
+# 5. If load remains, import from the grid
+# 6. Make sure battery stays in SOC limits
+def simulate_heuristic(Pload, Ppv, hours_of_day, Price_buy, Price_sell):
+    soc = np.zeros(hours + 1)
+    soc[0] = SOC_INIT
 
+    imp = np.zeros(hours)
+    exp = np.zeros(hours)
+    ch = np.zeros(hours)
+    dis = np.zeros(hours)
+
+    for t in range(hours):
+
+        soc_cur = soc[t]
+        load = Pload[t]
+        pv = Ppv[t]
+
+        # PV → load
+        serve = min(pv, load)
+        load_rem = load - serve
+        pv_rem = pv - serve
+
+        # Charge from PV
+        if pv_rem > 0:
+            max_charge = (SOC_MAX - soc_cur) / (ETA_CH)
+            cp = min(pv_rem, P_MAX_CH, max_charge)
+            ch[t] = cp
+            soc_cur = soc_cur + (ETA_CH * cp)
+            pv_rem = pv_rem - cp
+
+        # Export remaining PV
+        exp[t] = max(pv_rem, 0)
+
+        # Peak hour: discharge
+        if hours_of_day[t] in PEAK_HOURS and load_rem > 0:
+            max_dis = (soc_cur - SOC_MIN) * ETA_DIS
+            dp = min(P_MAX_DIS, max_dis, load_rem)
+            dis[t] = dp
+            soc_cur = soc_cur - (dp / ETA_DIS)
+            load_rem = load_rem - dp
+
+        imp[t] = max(load_rem, 0)
+        soc[t + 1] = min(max(soc_cur, SOC_MIN), SOC_MAX)
+
+    cost_buy = np.sum(imp * Price_buy)
+    rev_sell = np.sum(exp * Price_sell)
+
+    return {
+        "imp": imp, "exp": exp,
+        "ch": ch, "dis": dis,
+        "soc": soc,
+        "net_bill": cost_buy - rev_sell,
+        "grid_import": np.sum(imp),
+        "grid_export": np.sum(exp),
+        "throughput": np.sum(ch + dis)
+    }
+
+heur = simulate_heuristic(Pload, Ppv, hours_of_day, Price_buy, Price_sell)
+
+print(f"Heuristic net bill:  {heur['net_bill']:.2f} ₹")
