@@ -147,6 +147,7 @@ heur = simulate_heuristic(Pload, Ppv, hours_of_day, Price_buy, Price_sell)
 
 print(f"Heuristic net bill:  {heur['net_bill']:.2f} ₹")
 
+# Optimisation Model
 # Using LP
 prob = pulp.LpProblem("HomeEnergyLP", pulp.LpMinimize)
 
