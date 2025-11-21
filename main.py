@@ -73,6 +73,14 @@ Ppv = np.asarray(Ppv, float)
 Price_buy = np.asarray(Price_buy, float)
 Price_sell = np.asarray(Price_sell, float)
 
+# Passive solar modelling(no batteries)
+Pnet = Pload - Ppv
+cost_solar_passive = np.sum(np.maximum(Pnet, 0) * Price_buy)
+rev_solar_passive = np.sum(np.maximum(-Pnet, 0) * Price_sell)
+passive_bill = cost_solar_passive - rev_solar_passive
+
+print(f"Solar Only:  {passive_bill:.2f} ₹")
+
 # Heuristic Approach
 # 1. Serve load from PV first
 # 2. If PV remains, charge the battery
@@ -142,18 +150,14 @@ print(f"Heuristic net bill:  {heur['net_bill']:.2f} ₹")
 # Using LP
 prob = pulp.LpProblem("HomeEnergyLP", pulp.LpMinimize)
 
-
 Pbuy = pulp.LpVariable.dicts("Pbuy", range(hours), lowBound=0)
 Psell = pulp.LpVariable.dicts("Psell", range(hours), lowBound=0)
 Pch = pulp.LpVariable.dicts("Pch", range(hours), lowBound=0, upBound=P_MAX_CH)
 Pdis = pulp.LpVariable.dicts("Pdis", range(hours), lowBound=0, upBound=P_MAX_DIS)
 
-
 E = pulp.LpVariable.dicts("E", range(hours + 1), lowBound=SOC_MIN, upBound=SOC_MAX)
 
-
 prob += (E[0] == SOC_INIT)
-
 
 # Objective
 prob += pulp.lpSum([
@@ -162,29 +166,22 @@ prob += pulp.lpSum([
    for t in range(hours)
 ])
 
-
 # Constraints
 for t in range(hours):
-
-
    prob += Ppv[t] + Pbuy[t] + Pdis[t] == Pload[t] + Pch[t] + Psell[t]
-
-
    prob += E[t + 1] == E[t] + ETA_CH * Pch[t] - (1.0 / ETA_DIS) * Pdis[t]
-
 
 # Cyclic SOC
 prob += E[hours] == SOC_INIT
 
-
 print("Solving LP...")
-solver = pulp.PULP_CBC_CMD(msg=1, timeLimit=SOLVER_LIMIT)
+solver = pulp.PULP_CBC_CMD(msg=0, timeLimit=SOLVER_LIMIT)
 prob.solve(solver)
 print("Status:", pulp.LpStatus[prob.status])
 
-
-def val(v): return float(pulp.value(v) or 0)
-
+# Extract Results
+def val(v):
+    return float(pulp.value(v) or 0)
 
 res_buy = np.array([val(Pbuy[t]) for t in range(hours)])
 res_sell = np.array([val(Psell[t]) for t in range(hours)])
@@ -192,11 +189,9 @@ res_ch = np.array([val(Pch[t]) for t in range(hours)])
 res_dis = np.array([val(Pdis[t]) for t in range(hours)])
 res_soc = np.array([val(E[t + 1]) for t in range(hours)])
 
-
 eps = 1e-8
 for arr in [res_buy, res_sell, res_ch, res_dis, res_soc]:
    arr[np.abs(arr) < eps] = 0
-
 
 # Costs
 cost_buy_lp = np.sum(res_buy * Price_buy)
@@ -205,6 +200,5 @@ net_bill_lp = cost_buy_lp - rev_sell_lp
 throughput_lp = np.sum(res_ch + res_dis)
 grid_import_lp_kwh = np.sum(res_buy)
 grid_export_lp_kwh = np.sum(res_sell)
-
 
 print(f"LP optimized bill:   {net_bill_lp:.2f} ₹")
