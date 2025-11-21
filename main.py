@@ -103,7 +103,7 @@ def simulate_heuristic(Pload, Ppv, hours_of_day, Price_buy, Price_sell):
         load = Pload[t]
         pv = Ppv[t]
 
-        # PV → load
+        # PV -> load
         serve = min(pv, load)
         load_rem = load - serve
         pv_rem = pv - serve
@@ -203,3 +203,20 @@ grid_import_lp_kwh = np.sum(res_buy)
 grid_export_lp_kwh = np.sum(res_sell)
 
 print(f"LP optimized bill:   {net_bill_lp:.2f} ₹")
+
+# Save schedule
+out = pd.DataFrame({
+    "Timestamp": df[timestamp_col] if timestamp_col else np.arange(hours),
+    "Load_kW": Pload,
+    "Solar_kW": Ppv,
+    "Heur_Import": heur["imp"],
+    "Heur_Export": heur["exp"],
+    "Heur_Ch": heur["ch"],
+    "Heur_Dis": heur["dis"],
+    "LP_Import": res_buy,
+    "LP_Export": res_sell,
+    "LP_Ch": res_ch,
+    "LP_Dis": res_dis,
+})
+out.to_csv("comparison_schedule.csv", index=False)
+print("\nSaved: comparison_schedule.csv")
