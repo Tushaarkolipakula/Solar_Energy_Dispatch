@@ -66,7 +66,7 @@ Price_sell = np.minimum(
     Price_buy - 0.001
 )
 
-# To make sure all arrays are NUMPY float arrays
+# To make sure all arrays are numpy float arrays
 Pload = np.asarray(Pload, float)
 Ppv = np.asarray(Ppv, float)
 Price_buy = np.asarray(Price_buy, float)
