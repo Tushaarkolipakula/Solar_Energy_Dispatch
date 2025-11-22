@@ -1,6 +1,6 @@
 # Project Title : Solar_Energy_Dispatch 
-## Team Name : Solar Sparks
-## Member names : Tejas Kollipara BT2024147, Varun E BT2024220, K.Sai Tushar BT2024022
+### Team Name : Solar Sparks
+### Member names : Tejas Kollipara BT2024147, Varun E BT2024220, K.Sai Tushar BT2024022
 
 ## Battery Energy Management Optimization 
 
