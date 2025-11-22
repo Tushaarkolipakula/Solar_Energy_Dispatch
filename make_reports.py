@@ -1,4 +1,3 @@
-# make_reports.py
 import os
 import pandas as pd
 import numpy as np
@@ -6,12 +5,11 @@ import numpy as np
 # --- CONFIG ---
 ETA_CH = 0.95
 ETA_DIS = 0.95
-SOC_MIN = 0.10 * 10.0   # E_MAX = 10.0 in your main.py
+SOC_MIN = 0.10 * 10.0 
 SOC_MAX = 0.95 * 10.0
 SOC_INIT = SOC_MIN
 DT = 1.0
 
-# --- filenames ---
 comparison_file = "comparison_schedule.csv"
 hourly_file = "hourly_data.csv"
 
@@ -25,7 +23,7 @@ if not os.path.exists(comparison_file):
             f"Neither '{comparison_file}' nor '{hourly_file}' found in current folder."
         )
 
-# load schedule saved by your main.py
+# load schedule from main.py
 df = pd.read_csv(comparison_file)
 # unify timestamp / hour column if present
 if "Timestamp" in df.columns:
@@ -34,13 +32,13 @@ if "Timestamp" in df.columns:
     except Exception:
         pass
 
-# required columns in comparison_schedule.csv produced by your main.py
+# required columns in comparison_schedule.csv produced from main.py
 required = ["Load_kW", "Solar_kW", "LP_Import", "LP_Export", "LP_Ch", "LP_Dis"]
 missing = [c for c in required if c not in df.columns]
 if missing:
     raise SystemExit(f"comparison_schedule.csv missing columns: {missing}")
 
-# compute solar utilized = solar generation - exported (what's exported by LP is leftover)
+# compute solar utilized = solar generation - exported
 df["Solar_utilized_kW"] = df["Solar_kW"] - df["LP_Export"]
 # ensure not negative (numerical eps)
 df["Solar_utilized_kW"] = df["Solar_utilized_kW"].clip(lower=0.0)
