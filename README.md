@@ -21,13 +21,24 @@ This project simulates and optimizes battery energy storage behavior for a resid
 
 ---
 
-## 1. Data Cleaning & Preparation
+## 1. Data Cleaning ,Preparation & EDA
 
 **Purpose:**
 
 * Convert 15-minute resolution data to hourly resolution.
 * Strip unnecessary columns.
 * Ensure consistent formatting and handle missing values.
+
+**Exploratory Data Analysis Performed:**
+
+- **Hourly Demand Over Time** – Visualizes fluctuations in consumption.
+- **Distribution of Demand & Solar Generation** – Highlights peak values and frequency of different load/generation levels.
+- **Correlation Heatmap** – Reveals relationships between key features.
+- **Solar vs Load Comparison** – Provides insight into solar sufficiency.
+- **One-day Solar Trend** – Demonstrates daily solar generation pattern.
+
+These plots validate the data quality and guide the modeling strategy.
+
 
 **Files:**
 
