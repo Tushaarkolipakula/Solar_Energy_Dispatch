@@ -174,12 +174,6 @@ This project evaluates three scenarios:
 ### Optimal Hourly Power Flow Table
 
 The following output snippet shows the optimal scheduling of power usage for each hour. It includes values for:
-
-- Grid import/export
-- Battery charging/discharging
-- Solar utilization
-- State of charge (SOC) of the battery
-
 This helps visualize how the optimization algorithm balances solar generation, grid usage, and battery behavior.
 
 ![Optimal Hourly Power Flow Table](hourly_power_flow.jpg)
@@ -189,12 +183,6 @@ This helps visualize how the optimization algorithm balances solar generation, g
 ### Battery Charge/Discharge Events Table
 
 The following output snippet highlights specific hours where the battery actively charged or discharged. It includes the following details for each relevant time interval:
-
-- Battery charge and discharge power levels
-- State of charge (SOC) at each hour
-- Load and solar generation
-- Grid import/export activities
-
 This table helps understand how the battery operates throughout the day to minimize grid costs and efficiently utilize solar energy.
 
 ![battery charge and discharge events](battery_charge.jpg)
