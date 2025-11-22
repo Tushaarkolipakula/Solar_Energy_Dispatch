@@ -244,7 +244,7 @@ for it in range(num_iters):
     if it % 5 == 0:
         print(f"[Conv iter {it:02d}] Objective = {current_obj:.2f}")
 
-# PLOT
+# Plot
 plt.figure(figsize=(12, 6))
 plt.plot(convergence_obj, "-o", label="Simulated LP Convergence (descending)")
 plt.axhline(true_opt, linestyle="--", label="True LP Optimum")
