@@ -1,6 +1,8 @@
-# Solar_Energy_Dispatch
+# Project Title : Solar_Energy_Dispatch 
+## Team Name : Solar Sparks
+## Member names : Tejas Kollipara BT2024147, Varun E BT2024220, K.Sai Tushar BT2024022
 
-## Battery Energy Management Optimization
+## Battery Energy Management Optimization 
 
 This project simulates and optimizes battery energy storage behavior for a residential or commercial setting using solar generation and time-of-use pricing. It includes data preprocessing, heuristic simulation, linear programming-based optimization, and reporting/visualization.
 
@@ -130,7 +132,7 @@ python make_reports.py
 
 ---
 
-## 6. Dependencies
+## 6. Libraries
 
 * Python 3.7+
 * pandas
