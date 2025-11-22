@@ -99,7 +99,7 @@ This project simulates and optimizes battery energy storage behavior for a resid
   * Battery Charge/Discharge
 * Optimal Power Flow Trends
 
-> 📌 Tip: Most graphs also include both daily and full-period views for clarity.
+>  Tip: Most graphs also include both daily and full-period views for clarity.
 
 ---
 
@@ -147,7 +147,7 @@ pip install pandas numpy pulp matplotlib seaborn
 
 ## 8. Results
 
-### 💰 Cost Comparison
+###  Cost Comparison
 
 This project evaluates three scenarios:  
 - **Solar Only (No Battery):** Basic setup without any battery storage.  
